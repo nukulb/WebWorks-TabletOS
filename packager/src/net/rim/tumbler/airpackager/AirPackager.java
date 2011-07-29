@@ -180,9 +180,10 @@ public class AirPackager {
             //
             // Create a splash screen consistent with the loading screen.
             // If the widget config doesn't specify loading screen data,
-            // splashscreenFilename will be null.
+            // both splashscreen files will be null.
             //
-            String splashscreenFilename = createSplashscreen(sourcePath);
+            String splashscreenLandscape = createSplashscreen(sourcePath, 1); //1 is landscape
+			String splashscreenPortrait = createSplashscreen(sourcePath, 2); //2 is portrait
 
             //
             // Copy src files to the bin-debug folder
@@ -239,7 +240,7 @@ public class AirPackager {
             
             File bbt = new File(sourcePath, FILE_BLACKBERRY_TABLET_XML);
             File bbtDes = new File(bindebugPath, FILE_BLACKBERRY_TABLET_XML);
-            prepareBBTXML(bbt, bbtDes, iconPath, splashscreenFilename);
+            prepareBBTXML(bbt, bbtDes, iconPath, splashscreenLandscape);
             
             bbt.delete();
             
@@ -509,7 +510,8 @@ public class AirPackager {
             File infile,
             File destFile,
             String iconPath,
-            String splashscreenFilename) // may be null
+            String splashscreenLandscape //may be null
+			String splashscreenFilenamePortrait) //either of them, one wont exist without the other
             throws IOException
         {
             Writer w = null;
@@ -536,7 +538,7 @@ public class AirPackager {
                 // Splash screen
                 if (splashscreenFilename != null) {
                     Element splashscreen = d.createElement(DOC_ELM_SPLASHSCREEN);
-                    splashscreen.appendChild(d.createTextNode(splashscreenFilename));
+					splashscreen.appendChild(d.createTextNode(splashscreenLandscape + ":" + splashscreenPortrait));
                     d.getFirstChild().appendChild(splashscreen);
                 }
 
@@ -679,7 +681,7 @@ public class AirPackager {
      * @return the name of the splash screen image file on disk, or null
      * if none created.
      */
-    private String createSplashscreen(String directory)
+    private String createSplashscreen(String directory, int orientation) //Whichever one it is determines the orientation of the picture
         throws IOException
     {
         // Get string args from widget config. They may be null.
@@ -704,21 +706,23 @@ public class AirPackager {
         BufferedImage fgImage = arg2 == null
             ? null
             : ImageIO.read(new File(directory, arg2));
-        BufferedImage composition = new BufferedImage(SCREEN_WIDTH, SCREEN_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage composition = new BufferedImage(SCREEN_WIDTH, SCREEN_HEIGHT, BufferedImage.TYPE_INT_ARGB);//may be a swap or not
         Graphics2D g = composition.createGraphics();
 
         g.setBackground(bgcolor);
-        g.clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+        g.clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT); //swap screen_width and screen_height for orientation change
 
         if (bgImage != null) {
-            g.drawImage(bgImage, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, null);
+            g.drawImage(bgImage, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, null); //swap screen_width and screen_height for orientation change
         }
 
         if (fgImage != null) {
-            g.drawImage(fgImage, (SCREEN_WIDTH - fgImage.getWidth())/2, (SCREEN_HEIGHT - fgImage.getHeight())/2, null);
+            g.drawImage(fgImage, (SCREEN_WIDTH - fgImage.getWidth())/2, (SCREEN_HEIGHT - fgImage.getHeight())/2, null); //swap screen_width and screen_height for orientation change
         }
 
         File out = File.createTempFile(FILE_SPSH, DELIMITER_DOT + SPLASHSCREEN_FORMAT, new File(directory));
+		
+		// if orientation is portrait, apply transform, if not, go nuts. 
         ImageIO.write(composition, SPLASHSCREEN_FORMAT, out);
 
         return out.getName();
