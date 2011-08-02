@@ -18,6 +18,8 @@ package net.rim.tumbler.airpackager;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileWriter;
@@ -28,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.lang.Math;
 
 import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
@@ -240,7 +243,7 @@ public class AirPackager {
             
             File bbt = new File(sourcePath, FILE_BLACKBERRY_TABLET_XML);
             File bbtDes = new File(bindebugPath, FILE_BLACKBERRY_TABLET_XML);
-            prepareBBTXML(bbt, bbtDes, iconPath, splashscreenLandscape);
+            prepareBBTXML(bbt, bbtDes, iconPath, splashscreenLandscape, splashscreenPortrait);
             
             bbt.delete();
             
@@ -510,8 +513,8 @@ public class AirPackager {
             File infile,
             File destFile,
             String iconPath,
-            String splashscreenLandscape //may be null
-			String splashscreenFilenamePortrait) //either of them, one wont exist without the other
+            String splashscreenLandscape, //may be null
+			String splashscreenPortrait) //either of them, one wont exist without the other
             throws IOException
         {
             Writer w = null;
@@ -536,7 +539,7 @@ public class AirPackager {
                 }                
 
                 // Splash screen
-                if (splashscreenFilename != null) {
+                if (splashscreenLandscape != null || splashscreenPortrait != null) {
                     Element splashscreen = d.createElement(DOC_ELM_SPLASHSCREEN);
 					splashscreen.appendChild(d.createTextNode(splashscreenLandscape + ":" + splashscreenPortrait));
                     d.getFirstChild().appendChild(splashscreen);
@@ -681,7 +684,7 @@ public class AirPackager {
      * @return the name of the splash screen image file on disk, or null
      * if none created.
      */
-    private String createSplashscreen(String directory, int orientation) //Whichever one it is determines the orientation of the picture
+    private String createSplashscreen(String directory, int orientation) 
         throws IOException
     {
         // Get string args from widget config. They may be null.
@@ -706,23 +709,41 @@ public class AirPackager {
         BufferedImage fgImage = arg2 == null
             ? null
             : ImageIO.read(new File(directory, arg2));
-        BufferedImage composition = new BufferedImage(SCREEN_WIDTH, SCREEN_HEIGHT, BufferedImage.TYPE_INT_ARGB);//may be a swap or not
+		
+		BufferedImage composition = null;
+		
+		if (orientation == 2) {
+			composition = new BufferedImage(SCREEN_HEIGHT, SCREEN_WIDTH, BufferedImage.TYPE_INT_ARGB);
+		} else {
+			composition = new BufferedImage(SCREEN_WIDTH, SCREEN_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+		}
         Graphics2D g = composition.createGraphics();
 
         g.setBackground(bgcolor);
-        g.clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT); //swap screen_width and screen_height for orientation change
+		
+		if (orientation == 2) {
+			g.clearRect(0, 0, SCREEN_HEIGHT, SCREEN_WIDTH);
+		} else {
+			g.clearRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+		}
 
-        if (bgImage != null) {
-            g.drawImage(bgImage, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, null); //swap screen_width and screen_height for orientation change
-        }
-
-        if (fgImage != null) {
-            g.drawImage(fgImage, (SCREEN_WIDTH - fgImage.getWidth())/2, (SCREEN_HEIGHT - fgImage.getHeight())/2, null); //swap screen_width and screen_height for orientation change
-        }
+		if (orientation == 2) {
+			if (bgImage != null) {
+				g.drawImage(bgImage, 0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, null); 
+			}
+			if (fgImage != null) {
+				g.drawImage(fgImage, (SCREEN_HEIGHT - fgImage.getHeight())/2, (SCREEN_WIDTH - fgImage.getWidth())/2, null);
+			}
+		} else {
+			if (bgImage != null) {
+				g.drawImage(bgImage, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, null);
+			}
+			if (fgImage != null) {
+				g.drawImage(fgImage, (SCREEN_WIDTH - fgImage.getWidth())/2, (SCREEN_HEIGHT - fgImage.getHeight())/2, null); 
+			}
+		}
 
         File out = File.createTempFile(FILE_SPSH, DELIMITER_DOT + SPLASHSCREEN_FORMAT, new File(directory));
-		
-		// if orientation is portrait, apply transform, if not, go nuts. 
         ImageIO.write(composition, SPLASHSCREEN_FORMAT, out);
 
         return out.getName();
