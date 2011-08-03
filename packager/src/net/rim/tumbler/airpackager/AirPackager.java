@@ -31,6 +31,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.lang.Math;
+import java.io.Console;
 
 import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
@@ -753,13 +754,7 @@ public class AirPackager {
 				g.drawImage(bgImage, 0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, null); 
 			}
 			if (fgImage != null) {
-				//AffineTransform tx = new AffineTransform();
-				//tx.scale(0.66, 1);
-
-				//AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
-				//fgImage = op.filter(fgImage, null);
-				//g.drawImage(fgImage, (SCREEN_HEIGHT - fgImage.getHeight())/2, (SCREEN_WIDTH - fgImage.getWidth())/2, null);
-				g.drawImage(fgImage, 0, (SCREEN_WIDTH - fgImage.getHeight())/2, null); 
+				g.drawImage(fgImage, -(SCREEN_WIDTH - fgImage.getHeight())/2, (SCREEN_WIDTH - fgImage.getHeight())/2, null); //magic number for centering is -195
 			}
 		} else {
 			if (bgImage != null) {
