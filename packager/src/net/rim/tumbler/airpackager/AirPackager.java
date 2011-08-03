@@ -732,7 +732,13 @@ public class AirPackager {
 				g.drawImage(bgImage, 0, 0, SCREEN_HEIGHT, SCREEN_WIDTH, null); 
 			}
 			if (fgImage != null) {
-				g.drawImage(fgImage, (SCREEN_HEIGHT - fgImage.getHeight())/2, (SCREEN_WIDTH - fgImage.getWidth())/2, null);
+				//AffineTransform tx = new AffineTransform();
+				//tx.scale(0.66, 1);
+
+				//AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
+				//fgImage = op.filter(fgImage, null);
+				//g.drawImage(fgImage, (SCREEN_HEIGHT - fgImage.getHeight())/2, (SCREEN_WIDTH - fgImage.getWidth())/2, null);
+				g.drawImage(fgImage, 0, (SCREEN_WIDTH - fgImage.getHeight())/2, null); 
 			}
 		} else {
 			if (bgImage != null) {
@@ -743,6 +749,7 @@ public class AirPackager {
 			}
 		}
 
+		
         File out = File.createTempFile(FILE_SPSH, DELIMITER_DOT + SPLASHSCREEN_FORMAT, new File(directory));
         ImageIO.write(composition, SPLASHSCREEN_FORMAT, out);
 
