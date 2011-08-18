@@ -9,12 +9,69 @@
 	<modules>
 		<module>packager</module>
 		<module>framework</module>
-		<module>installer</module>
 	</modules>
 
 	<properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<webworksZipPackage.filename>WebWorksForPlaybook.zip</webworksZipPackage.filename>
+		<project.build.sourceDirectory>.</project.build.sourceDirectory>
 	</properties>
+	
+	<profiles>
+		<profile>
+			<id>MakeInstaller</id>
+			<activation>
+				<file>
+					<exists>${basedir}/installer</exists>
+				</file>
+			</activation>
+			<modules>
+				<module>installer</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>MakeZip</id>
+			<activation>
+				<file>
+					<missing>${basedir}/installer</missing>
+				</file>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-dependency-plugin</artifactId>
+						<version>2.3</version>
+						<executions>
+							<execution>
+								<id>copy</id>
+								<phase>package</phase>
+								<goals>
+									<goal>copy</goal>
+								</goals>								
+								<configuration>
+									<artifactItems>
+										<artifactItem>
+											<groupId>${project.groupId}</groupId>
+											<artifactId>framework</artifactId>
+											<version>1.0.0.1-SNAPSHOT</version>
+											<type>zip</type>
+											<overWrite>true</overWrite>
+											<outputDirectory>${basedir}/target</outputDirectory>
+											<destFileName>${webworksZipPackage.filename}</destFileName>
+										</artifactItem>
+									</artifactItems>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+	
+	
+	
 
     <distributionManagement>
        <repository>
