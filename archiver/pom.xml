@@ -4,9 +4,10 @@
 		<artifactId>snarf</artifactId>
 		<version>1.0.0.1</version>
 	</parent>
-
-    <modelVersion>4.0.0</modelVersion>
-    <artifactId>archiver</artifactId>
+	
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>${project.parent.groupId}</groupId>
+	<artifactId>archiver</artifactId>
 	<version>${project.parent.version}-SNAPSHOT</version>
 	<name>${project.artifactId}-${project.version}</name>
 	<packaging>pom</packaging>
@@ -18,7 +19,7 @@
 
 	<dependencies>
 	    <dependency>
-			<groupId>net.rim.snarf</groupId>
+			<groupId>${project.parent.groupId}</groupId>
 			<artifactId>framework</artifactId>
 			<version>${project.parent.version}-SNAPSHOT</version>
 			<type>zip</type>
@@ -45,7 +46,7 @@
 								<artifactItem>
 									<groupId>${project.groupId}</groupId>
 									<artifactId>framework</artifactId>
-									<version>1.0.0.1-SNAPSHOT</version>
+									<version>${project.version}</version>
 									<type>zip</type>
 									<overWrite>true</overWrite>
 									<outputDirectory>${project.build.sourceDirectory}/target</outputDirectory>
