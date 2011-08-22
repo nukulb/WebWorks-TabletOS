@@ -1,0 +1,61 @@
+<project>
+	<parent>
+		<groupId>net.rim.snarf</groupId>
+		<artifactId>snarf</artifactId>
+		<version>1.0.0.1</version>
+	</parent>
+
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>archiver</artifactId>
+	<version>${project.parent.version}-SNAPSHOT</version>
+	<name>${project.artifactId}-${project.version}</name>
+	<packaging>pom</packaging>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<webworksZipPackage.filename>WebWorksForPlaybook.zip</webworksZipPackage.filename>
+	</properties>
+
+	<dependencies>
+	    <dependency>
+			<groupId>net.rim.snarf</groupId>
+			<artifactId>framework</artifactId>
+			<version>${project.parent.version}-SNAPSHOT</version>
+			<type>zip</type>
+			<scope>runtime</scope>
+		</dependency>		
+	</dependencies>
+    
+    <build>		
+		<sourceDirectory>${basedir}/..</sourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<version>2.3</version>
+				<executions>
+					<execution>
+						<id>copy</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>								
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>${project.groupId}</groupId>
+									<artifactId>framework</artifactId>
+									<version>1.0.0.1-SNAPSHOT</version>
+									<type>zip</type>
+									<overWrite>true</overWrite>
+									<outputDirectory>${project.build.sourceDirectory}/target</outputDirectory>
+									<destFileName>${webworksZipPackage.filename}</destFileName>
+								</artifactItem>
+							</artifactItems>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
