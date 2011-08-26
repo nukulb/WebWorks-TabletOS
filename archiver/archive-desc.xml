@@ -22,5 +22,33 @@ xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assemb
 				<include>blackberry.*</include>
 			</includes>
         </fileSet> 
+		<fileSet>
+			<directory>${basedir}/../js_api/Common_AS/JSONLibrary/src/json</directory>
+			<outputDirectory>AirAppTemplates/src/json</outputDirectory>
+			<includes>
+				<include>*</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${basedir}/../js_api/globalJS</directory> 
+			<outputDirectory>AirAppTemplates/src/WebWorksApplicationSharedJsRepository0/sharedglobal</outputDirectory>
+			<includes>
+				<include>*</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${basedir}/../framework/src</directory> 
+			<outputDirectory>AirAppTemplates/src</outputDirectory>
+			<includes>
+				<include>*/**</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>resources/bin</directory> 
+			<outputDirectory>bin</outputDirectory>
+			<includes>
+				<include>*</include>
+			</includes>
+		</fileSet>
 	</fileSets>
 </assembly>
