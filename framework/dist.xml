@@ -18,6 +18,16 @@ xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assemb
             <directory>${nativeLauncher.dir}</directory>                    
             <outputDirectory>/</outputDirectory>            
         </fileSet>
+		
+		<fileSet>
+			<directory>${basedir}/../js_api/Common_AS/JSONLibrary/src/json</directory>
+			<outputDirectory>AirAppTemplates/src/json</outputDirectory>
+		</fileSet>
+		
+		<fileSet>
+			<directory>${basedir}/../js_api/globalJS</directory> 
+			<outputDirectory>AirAppTemplates/src/WebWorksApplicationSharedJsRepository0/sharedglobal</outputDirectory>
+		</fileSet>
 
 		<fileSet>            
             <directory>${bbwpjar.dir}</directory>                    
@@ -33,11 +43,4 @@ xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assemb
 			<outputDirectory>/ext</outputDirectory>
 		</fileSet>
     </fileSets>
-
-    <files>
-        <file>
-            <source>../builds/manual/resources/SDK_license_English.txt</source>
-            <outputDirectory>/</outputDirectory>      
-        </file> 
-    </files>    
 </assembly>
